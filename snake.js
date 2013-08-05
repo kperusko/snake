@@ -1,15 +1,14 @@
 /* jshint smarttabs: true */
 
-function Playground(canvas){
+function Playground(drawingSurface){
 	var that = this;
 
-	this.width = parseInt(canvas.getAttribute("width"), 10);
-	this.height = parseInt(canvas.getAttribute("height"), 10);
+	this.width = drawingSurface.getWidth();
+	this.height = drawingSurface.getHeight();
 	this.gridSize = 10;
-	this.initialSnakeSize = 10;
 	this.emptySpace = [];
 	this.food = [];
-	this.ctx = canvas.getContext("2d");
+	this.drawingSurface = drawingSurface;
 
 	var level = 0;
 	var timeout = 500;
@@ -62,7 +61,7 @@ function Playground(canvas){
 Playground.prototype.throwTheSnakeIn = function(){
 	var that = this;
 
-	this.snake = new Snake(this.initialSnakeSize, this.gridSize, this.ctx);
+	this.snake = new Snake(this.gridSize, this.drawingSurface);
 
 	$(document).keypress(function(e){
 		switch(e.keyCode){
@@ -116,37 +115,30 @@ Playground.prototype.throwTheFoodIn = function(){
 	var randomEmptySpaceIndex =  Math.floor(Math.random() * this.emptySpace.length);
 	var foodCoordinate = Coordinate.prototype.fromString(this.emptySpace[randomEmptySpaceIndex]);
 
-	this.ctx.fillRect(foodCoordinate.x, foodCoordinate.y, this.gridSize, this.gridSize);
+	this.drawingSurface.drawRectangle(foodCoordinate.x, foodCoordinate.y, this.gridSize, this.gridSize);
 
 	this.food.push( foodCoordinate );
 };
 
-function Snake(initialSnakeSize, width, ctx){
+function Snake(width, drawingSurface){
 	var that = this;
 
 	this.snakeWidth = width; //width of the snake in px;
-	this.initialSnakeSize = initialSnakeSize;
 
 	this.body = [];
 	this.currOrientation = this.orientationEnum.RIGHT;
 	this.nextOrientation = null;
 
-	this.ctx = ctx;
+	var initialSnakeSize = 10;
 
 	this.addSnakeToPosition = function(position){
 		that.body.push(position);
-		that.ctx.fillRect(position.x, position.y, that.snakeWidth, that.snakeWidth);
+		drawingSurface.drawRectangle(position.x, position.y, that.snakeWidth, that.snakeWidth);
 	};
-
-    function createInitialSnake(){
-		for (var i=0; i < that.initialSnakeSize * that.snakeWidth; i += that.snakeWidth){
-			that.addSnakeToPosition(new Coordinate(i,0));
-		}
-	}
 
 	this.move = function(position){
 		var removePosition = that.body.shift();
-		that.ctx.clearRect(removePosition.x, removePosition.y, that.snakeWidth, that.snakeWidth);
+		drawingSurface.deleteRectangle(removePosition.x, removePosition.y, that.snakeWidth, that.snakeWidth);
 
 		that.addSnakeToPosition(position);
 	};
@@ -160,7 +152,7 @@ function Snake(initialSnakeSize, width, ctx){
 		var x = lastPosition.x;
 		var y = lastPosition.y;
 
-		if ( that.nextOrientation == null ) that.nextOrientation = that.currOrientation;
+		if ( that.nextOrientation === null ) that.nextOrientation = that.currOrientation;
 
 		if ( that.nextOrientation == that.orientationEnum.LEFT )
 			x -= that.snakeWidth;
@@ -179,6 +171,12 @@ function Snake(initialSnakeSize, width, ctx){
 
 		return new Coordinate(x,y);
 	};
+
+    function createInitialSnake(){
+		for (var i=0; i < initialSnakeSize * that.snakeWidth; i += that.snakeWidth){
+			that.addSnakeToPosition(new Coordinate(i,0));
+		}
+	}
 
 	createInitialSnake();
 }
@@ -232,10 +230,40 @@ Coordinate.prototype.equals = function(compareTo){
 	return true;
 };
 
-var canvas = $('#playground');
+// Class for abstracting the drawing on canvas
+// so we can easily substitute the canvas with something else
+// to have some code portability
+function DrawingSurface(canv){
+	this.canvas = canv;
+	this.ctx = this.canvas.getContext("2d");
+}
 
-if ( canvas[0].getContext ){
-	var playground = new Playground(canvas[0]);
+DrawingSurface.prototype.canDrawOnSurface = function(){
+	if ( this.canvas.getContext ) return true;
+	return false;
+};
+
+DrawingSurface.prototype.getWidth = function(){
+	return parseInt(this.canvas.getAttribute("width"), 10);
+};
+
+DrawingSurface.prototype.getHeight = function(){
+	return parseInt(this.canvas.getAttribute("height"), 10);
+};
+
+DrawingSurface.prototype.drawRectangle = function(x,y,width,height){
+	this.ctx.fillRect(x,y,width,height);
+};
+
+DrawingSurface.prototype.deleteRectangle = function(x,y,width,height){
+	this.ctx.clearRect(x,y,width,height);
+};
+
+var canvas = $('#playground');
+var drawSurface = new DrawingSurface(canvas[0]);
+
+if ( drawSurface.canDrawOnSurface() ){
+	var playground = new Playground(drawSurface);
 	playground.throwTheSnakeIn();
 	playground.pushTheSnake();
 }
