@@ -1,5 +1,36 @@
 /* jshint smarttabs: true */
 
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+
+// requestAnimationFrame polyfill by Erik Möller
+// fixes from Paul Irish and Tino Zijdel
+(function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+	window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+	window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] ||
+			window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+
+    if (!window.requestAnimationFrame)
+	window.requestAnimationFrame = function(callback, element) {
+	    var currTime = new Date().getTime();
+	    var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+	    var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+	      timeToCall);
+	    lastTime = currTime + timeToCall;
+	    return id;
+	};
+
+    if (!window.cancelAnimationFrame)
+	window.cancelAnimationFrame = function(id) {
+	    clearTimeout(id);
+	};
+}());
+
+
 function Playground(drawingSurface){
 	var that = this;
 
@@ -46,15 +77,17 @@ function Playground(drawingSurface){
 		}
 	}
 
-	// Max timeout for the game is 15 ms
+	// Max timeout for the game is 17 ms
 	// which is pretty fast but still playable
 	function adjustTimeout(){
-		timeout = timeout - (timeout * 0.10);
+		timeout = Math.floor(timeout - (timeout * 0.10));
 
-		if ( timeout < 15 ) return timeout;
+		// max framerate 60fps which is about 16.66..7 ms
+		if ( timeout < 17 ) return timeout;
 	}
 
 	createEmptySpaceForSnake();
+
 	this.increaseLevel();
 }
 
@@ -86,26 +119,30 @@ Playground.prototype.occupyPosition = function(position){
 };
 
 Playground.prototype.pushTheSnake = function(){
-	var nextPosition = this.snake.getNextPosition();
+	var that = this;
+	
+	window.setTimeout(function(){	
+		var nextPosition = that.snake.getNextPosition();
+		if ( that.food.length === 0 ) that.throwTheFoodIn();
 
-	if ( this.food.length === 0 ) this.throwTheFoodIn();
+		if ( that.isInPlayground(nextPosition) ){
+			window.requestAnimationFrame(that.pushTheSnake.bind(that));
 
-	if ( this.isInPlayground(nextPosition) ){
-		this.occupyPosition(nextPosition);
+			that.occupyPosition(nextPosition);
 
-		if ( this.food[0].equals(nextPosition) ){
-			this.snake.eat(nextPosition);
-			this.food.pop();
+			if ( that.food[0].equals(nextPosition) ){
+				that.snake.eat(nextPosition);
+				that.food.pop();
 
-			this.increaseLevel();
+				that.increaseLevel();
+			}else{
+				that.emptySpace.push(that.snake.body[0].toString());
+				that.snake.move(nextPosition);
+			}
 		}else{
-			this.emptySpace.push(this.snake.body[0].toString());
-			this.snake.move(nextPosition);
+			//endgame
 		}
-		window.setTimeout(this.pushTheSnake.bind(this), this.getTimeout());
-	}else{
-	//endgame
-	}
+	}, this.getTimeout());
 };
 
 Playground.prototype.throwTheFoodIn = function(){
@@ -117,7 +154,7 @@ Playground.prototype.throwTheFoodIn = function(){
 	// Draw a food as in original snake.
 	// The original food is square divided in 9 squares
 	// with filled squares at (1,0), (0,1), (2,1) and (1,2) coordinates
-	if ( this.gridSize % 3 == 0 ){
+	if ( this.gridSize % 3 === 0 ){
 		var foodGridSize = this.gridSize / 3;
 
 		this.drawingSurface.deleteRectangle(foodCoordinate.x, foodCoordinate.y, foodGridSize, foodGridSize);
@@ -246,6 +283,7 @@ Coordinate.prototype.equals = function(compareTo){
 function DrawingSurface(canv){
 	this.canvas = canv;
 	this.ctx = this.canvas.getContext("2d");
+	this.ctx.fillStyle = "rgb(53, 48, 52)";
 }
 
 DrawingSurface.prototype.canDrawOnSurface = function(){
@@ -269,11 +307,13 @@ DrawingSurface.prototype.deleteRectangle = function(x,y,width,height){
 	this.ctx.clearRect(x,y,width,height);
 };
 
-var canvas = $('#playground');
-var drawSurface = new DrawingSurface(canvas[0]);
+$(document).ready(function(){
+	var canvas = $('#playground');
+	var drawSurface = new DrawingSurface(canvas[0]);
 
-if ( drawSurface.canDrawOnSurface() ){
-	var playground = new Playground(drawSurface);
-	playground.throwTheSnakeIn();
-	playground.pushTheSnake();
-}
+	if ( drawSurface.canDrawOnSurface() ){
+		var playground = new Playground(drawSurface);
+		playground.throwTheSnakeIn();
+		playground.pushTheSnake();
+	}
+});
