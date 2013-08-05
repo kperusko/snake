@@ -12,6 +12,7 @@ function Playground(canvas){
 	this.ctx = canvas.getContext("2d");
 
 	var level = 0;
+	var timeout = 500;
 
 	this.isInPlayground = function(position){
 		if ( position.x + that.gridSize > that.width ||
@@ -28,8 +29,14 @@ function Playground(canvas){
 	};
 
 	this.increaseLevel = function(){
+		adjustTimeout();
+
 		level++;
 		$('#level span').html(level);
+	};
+
+	this.getTimeout = function(){
+		return timeout;
 	};
 
 	function createEmptySpaceForSnake(){
@@ -38,6 +45,14 @@ function Playground(canvas){
 				that.emptySpace.push( new Coordinate(x, y).toString() );
 			}
 		}
+	}
+
+	// Max timeout for the game is 15 ms
+	// which is pretty fast but still playable
+	function adjustTimeout(){
+		timeout = timeout - (timeout * 0.10);
+
+		if ( timeout < 15 ) return timeout;
 	}
 
 	createEmptySpaceForSnake();
@@ -89,7 +104,8 @@ Playground.prototype.pushTheSnake = function(){
 		}else{
 			this.emptySpace.push(this.snake.body[0].toString());
 			this.snake.move(nextPosition);
-			window.setTimeout(this.pushTheSnake.bind(this), 100);
+
+			window.setTimeout(this.pushTheSnake.bind(this), this.getTimeout());
 		}
 	}else{
 	//endgame
