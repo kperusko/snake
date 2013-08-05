@@ -1,10 +1,12 @@
 /* jshint smarttabs: true */
 
-// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+/******************************************************************************
+ * http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+ * http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 
-// requestAnimationFrame polyfill by Erik Möller
-// fixes from Paul Irish and Tino Zijdel
+ * requestAnimationFrame polyfill by Erik Möller
+ * fixes from Paul Irish and Tino Zijdel 
+ *****************************************************************************/
 (function() {
     var lastTime = 0;
     var vendors = ['ms', 'moz', 'webkit', 'o'];
@@ -29,7 +31,7 @@
 	    clearTimeout(id);
 	};
 }());
-
+/******************************************************************************/
 
 function Playground(drawingSurface){
 	var that = this;
@@ -140,7 +142,7 @@ Playground.prototype.pushTheSnake = function(){
 				that.snake.move(nextPosition);
 			}
 		}else{
-			//endgame
+			$('#game_over').show();
 		}
 	}, this.getTimeout());
 };
@@ -283,7 +285,7 @@ Coordinate.prototype.equals = function(compareTo){
 function DrawingSurface(canv){
 	this.canvas = canv;
 	this.ctx = this.canvas.getContext("2d");
-	this.ctx.fillStyle = "rgb(53, 48, 52)";
+	this.ctx.fillStyle = "rgb(12,46,6)";
 }
 
 DrawingSurface.prototype.canDrawOnSurface = function(){
