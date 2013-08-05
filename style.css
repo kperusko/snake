@@ -22,20 +22,20 @@ canvas {
 }
 #game{
 	margin:auto;
-	width: 300px;
+	width: 351px;
 	display: block;
 }
 #game_over{
 	display: none;	
 	position:absolute;
-	top: 200px;
+	top: 92px;
 	left: 0;
 	right:0;
 }
 #game_over_inner{
-	width: 600px;
+	width: 250px;
 	margin: auto;
 	text-align: center;
 	background:#030C33;
-	padding:50px;
+	padding:25px;
 }
