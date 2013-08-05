@@ -5,7 +5,7 @@ function Playground(drawingSurface){
 
 	this.width = drawingSurface.getWidth();
 	this.height = drawingSurface.getHeight();
-	this.gridSize = 10;
+	this.gridSize = 9;
 	this.emptySpace = [];
 	this.food = [];
 	this.drawingSurface = drawingSurface;
@@ -98,14 +98,11 @@ Playground.prototype.pushTheSnake = function(){
 			this.food.pop();
 
 			this.increaseLevel();
-
-			this.pushTheSnake();
 		}else{
 			this.emptySpace.push(this.snake.body[0].toString());
 			this.snake.move(nextPosition);
-
-			window.setTimeout(this.pushTheSnake.bind(this), this.getTimeout());
 		}
+		window.setTimeout(this.pushTheSnake.bind(this), this.getTimeout());
 	}else{
 	//endgame
 	}
@@ -116,6 +113,19 @@ Playground.prototype.throwTheFoodIn = function(){
 	var foodCoordinate = Coordinate.prototype.fromString(this.emptySpace[randomEmptySpaceIndex]);
 
 	this.drawingSurface.drawRectangle(foodCoordinate.x, foodCoordinate.y, this.gridSize, this.gridSize);
+
+	// Draw a food as in original snake.
+	// The original food is square divided in 9 squares
+	// with filled squares at (1,0), (0,1), (2,1) and (1,2) coordinates
+	if ( this.gridSize % 3 == 0 ){
+		var foodGridSize = this.gridSize / 3;
+
+		this.drawingSurface.deleteRectangle(foodCoordinate.x, foodCoordinate.y, foodGridSize, foodGridSize);
+		this.drawingSurface.deleteRectangle(foodCoordinate.x+(foodGridSize*2), foodCoordinate.y, foodGridSize, foodGridSize);
+		this.drawingSurface.deleteRectangle(foodCoordinate.x+foodGridSize, foodCoordinate.y+foodGridSize, foodGridSize, foodGridSize);
+		this.drawingSurface.deleteRectangle(foodCoordinate.x, foodCoordinate.y+(foodGridSize*2), foodGridSize, foodGridSize);
+		this.drawingSurface.deleteRectangle(foodCoordinate.x+(foodGridSize*2), foodCoordinate.y+(foodGridSize*2), foodGridSize, foodGridSize);
+	}
 
 	this.food.push( foodCoordinate );
 };
