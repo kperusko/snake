@@ -128,7 +128,8 @@ function Snake(initialSnakeSize, width, ctx){
 	this.initialSnakeSize = initialSnakeSize;
 
 	this.body = [];
-	this.orientation = this.orientationEnum.RIGHT;
+	this.currOrientation = this.orientationEnum.RIGHT;
+	this.nextOrientation = null;
 
 	this.ctx = ctx;
 
@@ -159,17 +160,22 @@ function Snake(initialSnakeSize, width, ctx){
 		var x = lastPosition.x;
 		var y = lastPosition.y;
 
-		if ( that.orientation == that.orientationEnum.LEFT )
+		if ( that.nextOrientation == null ) that.nextOrientation = that.currOrientation;
+
+		if ( that.nextOrientation == that.orientationEnum.LEFT )
 			x -= that.snakeWidth;
 
-		if ( that.orientation == that.orientationEnum.RIGHT )
+		if ( that.nextOrientation == that.orientationEnum.RIGHT )
 			x += that.snakeWidth;
 
-		if ( that.orientation == that.orientationEnum.UP )
+		if ( that.nextOrientation == that.orientationEnum.UP )
 			y -= that.snakeWidth;
 
-		if ( that.orientation == that.orientationEnum.DOWN )
+		if ( that.nextOrientation == that.orientationEnum.DOWN )
 			y += that.snakeWidth;
+
+		that.currOrientation = that.nextOrientation;
+		that.nextOrientation = null;
 
 		return new Coordinate(x,y);
 	};
@@ -185,17 +191,17 @@ Snake.prototype.orientationEnum = {
 };
 
 Snake.prototype.setOrientation = function(orientation){
-	if( this.orientation == this.orientationEnum.LEFT &&
-		orientation != this.orientationEnum.RIGHT) this.orientation = orientation;
+	if( this.currOrientation == this.orientationEnum.LEFT &&
+		orientation != this.orientationEnum.RIGHT) this.nextOrientation = orientation;
 
-	if( this.orientation == this.orientationEnum.RIGHT &&
-		orientation != this.orientationEnum.LEFT) this.orientation = orientation;
+	if( this.currOrientation == this.orientationEnum.RIGHT &&
+		orientation != this.orientationEnum.LEFT) this.nextOrientation = orientation;
 
-	if( this.orientation == this.orientationEnum.UP &&
-		orientation != this.orientationEnum.DOWN) this.orientation = orientation;
+	if( this.currOrientation == this.orientationEnum.UP &&
+		orientation != this.orientationEnum.DOWN) this.nextOrientation = orientation;
 
-	if( this.orientation == this.orientationEnum.DOWN &&
-		orientation != this.orientationEnum.UP) this.orientation = orientation;
+	if( this.currOrientation == this.orientationEnum.DOWN &&
+		orientation != this.orientationEnum.UP) this.nextOrientation = orientation;
 };
 
 function Coordinate(x,y){
