@@ -65,6 +65,31 @@ Playground.prototype.occupyPosition = function(position){
 	delete(this.emptySpace[position.toString()]);
 };
 
+Playground.prototype.pushTheSnake = function(){
+	var nextPosition = this.snake.getNextPosition();
+
+	if ( this.food.length === 0 ) this.throwTheFoodIn();
+
+	if ( this.isInPlayground(nextPosition) ){
+		this.occupyPosition(nextPosition);
+
+		if ( this.food[0].equals(nextPosition) ){
+			this.snake.eat(nextPosition);
+			this.food.pop();
+
+			this.level++;
+
+			this.pushTheSnake();
+		}else{
+			this.emptySpace.push(this.snake.body[0].toString());
+			this.snake.move(nextPosition);
+			window.setTimeout(this.pushTheSnake.bind(this), 100);
+		}
+	}else{
+	//endgame
+	}
+};
+
 Playground.prototype.throwTheFoodIn = function(){
 	var randomEmptySpaceIndex =  Math.floor(Math.random() * this.emptySpace.length);
 	var foodCoordinate = Coordinate.prototype.fromString(this.emptySpace[randomEmptySpaceIndex]);
