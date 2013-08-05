@@ -7,11 +7,11 @@ function Playground(canvas){
 	this.height = parseInt(canvas.getAttribute("height"), 10);
 	this.gridSize = 10;
 	this.initialSnakeSize = 10;
-	this.level = 1;
 	this.emptySpace = [];
 	this.food = [];
-
 	this.ctx = canvas.getContext("2d");
+
+	var level = 0;
 
 	this.isInPlayground = function(position){
 		if ( position.x + that.gridSize > that.width ||
@@ -27,6 +27,11 @@ function Playground(canvas){
 		return true;
 	};
 
+	this.increaseLevel = function(){
+		level++;
+		$('#level span').html(level);
+	};
+
 	function createEmptySpaceForSnake(){
 		for ( var x = 0; x < that.width; x+=that.gridSize){
 			for ( var y = 0; y < that.height; y+=that.gridSize){
@@ -36,6 +41,7 @@ function Playground(canvas){
 	}
 
 	createEmptySpaceForSnake();
+	this.increaseLevel();
 }
 
 Playground.prototype.throwTheSnakeIn = function(){
@@ -77,7 +83,7 @@ Playground.prototype.pushTheSnake = function(){
 			this.snake.eat(nextPosition);
 			this.food.pop();
 
-			this.level++;
+			this.increaseLevel();
 
 			this.pushTheSnake();
 		}else{
@@ -204,9 +210,10 @@ Coordinate.prototype.equals = function(compareTo){
 	return true;
 };
 
-var canvas = document.getElementById('playground');
-if ( canvas.getContext ){
-	var playground = new Playground(canvas);
+var canvas = $('#playground');
+
+if ( canvas[0].getContext ){
+	var playground = new Playground(canvas[0]);
 	playground.throwTheSnakeIn();
 	playground.pushTheSnake();
 }
