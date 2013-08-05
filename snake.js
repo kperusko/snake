@@ -98,7 +98,7 @@ Playground.prototype.throwTheSnakeIn = function(){
 
 	this.snake = new Snake(this.gridSize, this.drawingSurface);
 
-	$(document).keypress(function(e){
+	$(document).keydown(function(e){
 		switch(e.keyCode){
 			case 37:
 			that.snake.setOrientation(that.snake.orientationEnum.LEFT);
@@ -117,7 +117,8 @@ Playground.prototype.throwTheSnakeIn = function(){
 };
 
 Playground.prototype.occupyPosition = function(position){
-	delete(this.emptySpace[position.toString()]);
+	this.emptySpace.splice(this.emptySpace.indexOf(position.toString()), 1);
+	
 };
 
 Playground.prototype.pushTheSnake = function(){
