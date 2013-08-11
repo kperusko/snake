@@ -36,10 +36,14 @@ canvas {
 }
 #game_over{
 	display: none;	
-	position:absolute;
-	top: 92px;
-	left: 0;
-	right:0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 50%;
+    height: 30%;
+    margin: auto;
 }
 #game_over_inner{
 	width: 250px;
