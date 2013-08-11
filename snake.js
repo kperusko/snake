@@ -88,6 +88,40 @@ function Playground(drawingSurface, gridSize){
 		if ( timeout < 17 ) return timeout;
 	}
 
+	this.addEventHandlers = function(){
+		$(document).swipe({
+			swipeLeft:function() {
+				that.snake.addOrientation(that.snake.orientationEnum.LEFT); 
+			},
+			swipeRight:function(){
+				that.snake.addOrientation(that.snake.orientationEnum.RIGHT);
+			},
+			swipeUp:function(){
+				that.snake.addOrientation(that.snake.orientationEnum.UP);
+			},
+			swipeDown:function(){
+				that.snake.addOrientation(that.snake.orientationEnum.DOWN);
+			}
+		});
+
+		$(document).keydown(function(e){
+			switch(e.keyCode){
+			case 37:
+				that.snake.addOrientation(that.snake.orientationEnum.LEFT);
+				break;
+			case 38:
+				that.snake.addOrientation(that.snake.orientationEnum.UP);
+				break;
+			case 39:
+				that.snake.addOrientation(that.snake.orientationEnum.RIGHT);
+				break;
+			case 40:
+				that.snake.addOrientation(that.snake.orientationEnum.DOWN);
+				break;
+			}
+		});
+	}
+
 	createEmptySpaceForSnake();
 
 	this.increaseLevel();
@@ -98,27 +132,11 @@ Playground.prototype.throwTheSnakeIn = function(){
 
 	this.snake = new Snake(this.gridSize, this.drawingSurface);
 
-	$(document).keydown(function(e){
-		switch(e.keyCode){
-			case 37:
-			that.snake.addOrientation(that.snake.orientationEnum.LEFT);
-			break;
-			case 38:
-			that.snake.addOrientation(that.snake.orientationEnum.UP);
-			break;
-			case 39:
-			that.snake.addOrientation(that.snake.orientationEnum.RIGHT);
-			break;
-			case 40:
-			that.snake.addOrientation(that.snake.orientationEnum.DOWN);
-			break;
-		}
-	});
+	this.addEventHandlers();
 };
 
 Playground.prototype.occupyPosition = function(position){
 	this.emptySpace.splice(this.emptySpace.indexOf(position.toString()), 1);
-
 };
 
 Playground.prototype.pushTheSnake = function(){
