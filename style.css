@@ -1,0 +1,41 @@
+@import url(http://fonts.googleapis.com/css?family=VT323);
+
+body{
+	background-color:#01000F;
+	font-family: "VT323", sans;
+	font-size: 62.5%; /* 1em = 10px*/
+	color: #37CE1C;
+}
+h1{
+	font-size: 4em;
+}
+h2{
+	font-size: 2.5em;
+}
+:visited,:link{color:#37CE1C;}
+
+#header h1{
+	font-size:5em;
+}
+canvas {
+	background: #37CE1C;
+}
+#game{
+	margin:auto;
+	width: 351px;
+	display: block;
+}
+#game_over{
+	display: none;	
+	position:absolute;
+	top: 92px;
+	left: 0;
+	right:0;
+}
+#game_over_inner{
+	width: 250px;
+	margin: auto;
+	text-align: center;
+	background:#030C33;
+	padding:25px;
+}
