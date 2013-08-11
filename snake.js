@@ -101,16 +101,16 @@ Playground.prototype.throwTheSnakeIn = function(){
 	$(document).keydown(function(e){
 		switch(e.keyCode){
 			case 37:
-			that.snake.setOrientation(that.snake.orientationEnum.LEFT);
+			that.snake.addOrientation(that.snake.orientationEnum.LEFT);
 			break;
 			case 38:
-			that.snake.setOrientation(that.snake.orientationEnum.UP);
+			that.snake.addOrientation(that.snake.orientationEnum.UP);
 			break;
 			case 39:
-			that.snake.setOrientation(that.snake.orientationEnum.RIGHT);
+			that.snake.addOrientation(that.snake.orientationEnum.RIGHT);
 			break;
 			case 40:
-			that.snake.setOrientation(that.snake.orientationEnum.DOWN);
+			that.snake.addOrientation(that.snake.orientationEnum.DOWN);
 			break;
 		}
 	});
@@ -177,7 +177,7 @@ function Snake(width, drawingSurface){
 
 	this.body = [];
 	this.currOrientation = this.orientationEnum.RIGHT;
-	this.nextOrientation = null;
+	this.nextOrientationBuffer = [];
 
 	var initialSnakeSize = 10;
 
@@ -197,27 +197,55 @@ function Snake(width, drawingSurface){
 		that.addSnakeToPosition(position);
 	};
 
+	this.getNextOrientation = function(){
+		var nextOrientation = null;
+
+		while(that.nextOrientationBuffer.length != 0){
+			var nextBuffer = that.nextOrientationBuffer.shift();
+
+			if( 
+				(this.currOrientation == this.orientationEnum.LEFT &&
+				 nextBuffer != this.orientationEnum.RIGHT) ||
+		
+				(this.currOrientation == this.orientationEnum.RIGHT &&
+				 nextBuffer != this.orientationEnum.LEFT) ||
+				
+				(this.currOrientation == this.orientationEnum.UP &&
+				 nextBuffer != this.orientationEnum.DOWN) ||
+				
+				(this.currOrientation == this.orientationEnum.DOWN &&
+				 nextBuffer != this.orientationEnum.UP) 
+			){
+				nextOrientation = nextBuffer;
+				break;
+			}
+		}
+
+		if ( nextOrientation === null ) nextOrientation = that.currOrientation;
+
+		return nextOrientation;
+	};
+
 	this.getNextPosition = function(){
 		var lastPosition = that.body[that.body.length-1];
 		var x = lastPosition.x;
 		var y = lastPosition.y;
 
-		if ( that.nextOrientation === null ) that.nextOrientation = that.currOrientation;
+		var nextOrientation = that.getNextOrientation();
 
-		if ( that.nextOrientation == that.orientationEnum.LEFT )
+		if ( nextOrientation == that.orientationEnum.LEFT )
 			x -= that.snakeWidth;
 
-		if ( that.nextOrientation == that.orientationEnum.RIGHT )
+		if ( nextOrientation == that.orientationEnum.RIGHT )
 			x += that.snakeWidth;
 
-		if ( that.nextOrientation == that.orientationEnum.UP )
+		if ( nextOrientation == that.orientationEnum.UP )
 			y -= that.snakeWidth;
 
-		if ( that.nextOrientation == that.orientationEnum.DOWN )
+		if ( nextOrientation == that.orientationEnum.DOWN )
 			y += that.snakeWidth;
 
-		that.currOrientation = that.nextOrientation;
-		that.nextOrientation = null;
+		that.currOrientation = nextOrientation;
 
 		return new Coordinate(x,y);
 	};
@@ -238,18 +266,8 @@ Snake.prototype.orientationEnum = {
 	DOWN : "down"
 };
 
-Snake.prototype.setOrientation = function(orientation){
-	if( this.currOrientation == this.orientationEnum.LEFT &&
-		orientation != this.orientationEnum.RIGHT) this.nextOrientation = orientation;
-
-	if( this.currOrientation == this.orientationEnum.RIGHT &&
-		orientation != this.orientationEnum.LEFT) this.nextOrientation = orientation;
-
-	if( this.currOrientation == this.orientationEnum.UP &&
-		orientation != this.orientationEnum.DOWN) this.nextOrientation = orientation;
-
-	if( this.currOrientation == this.orientationEnum.DOWN &&
-		orientation != this.orientationEnum.UP) this.nextOrientation = orientation;
+Snake.prototype.addOrientation = function(orientation){
+	this.nextOrientationBuffer.push(orientation);
 };
 
 function Coordinate(x,y){
