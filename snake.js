@@ -5,7 +5,7 @@
  * http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 
  * requestAnimationFrame polyfill by Erik Möller
- * fixes from Paul Irish and Tino Zijdel 
+ * fixes from Paul Irish and Tino Zijdel
  *****************************************************************************/
 (function() {
     var lastTime = 0;
@@ -33,12 +33,12 @@
 }());
 /******************************************************************************/
 
-function Playground(drawingSurface){
+function Playground(drawingSurface, gridSize){
 	var that = this;
 
 	this.width = drawingSurface.getWidth();
 	this.height = drawingSurface.getHeight();
-	this.gridSize = 9;
+	this.gridSize = gridSize;
 	this.emptySpace = [];
 	this.food = [];
 	this.drawingSurface = drawingSurface;
@@ -118,13 +118,13 @@ Playground.prototype.throwTheSnakeIn = function(){
 
 Playground.prototype.occupyPosition = function(position){
 	this.emptySpace.splice(this.emptySpace.indexOf(position.toString()), 1);
-	
+
 };
 
 Playground.prototype.pushTheSnake = function(){
 	var that = this;
-	
-	window.setTimeout(function(){	
+
+	window.setTimeout(function(){
 		var nextPosition = that.snake.getNextPosition();
 		if ( that.food.length === 0 ) that.throwTheFoodIn();
 
@@ -200,21 +200,21 @@ function Snake(width, drawingSurface){
 	this.getNextOrientation = function(){
 		var nextOrientation = null;
 
-		while(that.nextOrientationBuffer.length != 0){
+		while(that.nextOrientationBuffer.length !== 0){
 			var nextBuffer = that.nextOrientationBuffer.shift();
 
-			if( 
+			if(
 				(this.currOrientation == this.orientationEnum.LEFT &&
 				 nextBuffer != this.orientationEnum.RIGHT) ||
-		
+
 				(this.currOrientation == this.orientationEnum.RIGHT &&
 				 nextBuffer != this.orientationEnum.LEFT) ||
-				
+
 				(this.currOrientation == this.orientationEnum.UP &&
 				 nextBuffer != this.orientationEnum.DOWN) ||
-				
+
 				(this.currOrientation == this.orientationEnum.DOWN &&
-				 nextBuffer != this.orientationEnum.UP) 
+				 nextBuffer != this.orientationEnum.UP)
 			){
 				nextOrientation = nextBuffer;
 				break;
@@ -302,9 +302,44 @@ Coordinate.prototype.equals = function(compareTo){
 // so we can easily substitute the canvas with something else
 // to have some code portability
 function DrawingSurface(canv){
+	var that = this;
+
 	this.canvas = canv;
 	this.ctx = this.canvas.getContext("2d");
 	this.ctx.fillStyle = "rgb(12,46,6)";
+	this.gridSize = null;
+
+	// stretch the width of the 
+	function resizeCanvas(){
+		var container = $('#game'),
+		maxWidth = container.width();
+
+		var width = maxWidth;
+		// 1.75 is the aprox. ratio that we want to keep between height and width
+		var height = (maxWidth / 1.75);
+		
+		// The grid size is fixed at 21 x grid heigth
+		// so that the proportions of the snake width and canvas height
+		// are always the same. 
+		// The grid size must be divisible by 3 because the food is drawn
+		// as 3x3 square
+		that.gridSize = Math.floor(height/21) - Math.floor(height/21) % 3;
+
+		// Recalculate the final height and width.
+		// This will prevent the problem when the snake hits invisible wall
+		// i.e. when the next step is outside the canvas but the snake 
+		// is not drawed to the border of the canvas.
+		width = Math.floor(width / that.gridSize) * that.gridSize;
+		height = Math.floor(height / that.gridSize ) * that.gridSize;
+		
+		$(that.canvas).attr('width', width);
+		$(that.canvas).attr('height', height);
+
+		// adjust the padding of the parent element so that the canvas is always in center
+		if ( maxWidth > width )	$(that.canvas).parent().css('padding-left', Math.floor((maxWidth - width)/2));
+	}
+
+	resizeCanvas();
 }
 
 DrawingSurface.prototype.canDrawOnSurface = function(){
@@ -328,12 +363,16 @@ DrawingSurface.prototype.deleteRectangle = function(x,y,width,height){
 	this.ctx.clearRect(x,y,width,height);
 };
 
+DrawingSurface.prototype.getGridSize = function(){
+	return this.gridSize;
+};
+
 $(document).ready(function(){
 	var canvas = $('#playground');
 	var drawSurface = new DrawingSurface(canvas[0]);
 
 	if ( drawSurface.canDrawOnSurface() ){
-		var playground = new Playground(drawSurface);
+		var playground = new Playground(drawSurface, drawSurface.getGridSize());
 		playground.throwTheSnakeIn();
 		playground.pushTheSnake();
 	}

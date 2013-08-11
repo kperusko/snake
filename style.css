@@ -14,16 +14,25 @@ h2{
 }
 :visited,:link{color:#37CE1C;}
 
+#header{
+	text-align:center;
+	margin:0 auto;
+}
 #header h1{
 	font-size:5em;
 }
 canvas {
 	background: #37CE1C;
 }
-#game{
+#container{
 	margin:auto;
-	width: 351px;
-	display: block;
+	display:block;
+	width: 100%;
+}
+#game{
+	position: absolute;
+	width: 90%;
+	left: 5%;
 }
 #game_over{
 	display: none;	
