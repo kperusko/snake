@@ -330,12 +330,15 @@ function DrawingSurface(canv){
 	// stretch the width of the 
 	function resizeCanvas(){
 		var container = $('#game'),
-		maxWidth = container.width();
-
+		maxWidth = container.width(),
+		maxHeight = container.height();
+		console.log(maxHeight);
 		var width = maxWidth;
 		// 1.75 is the aprox. ratio that we want to keep between height and width
 		var height = (maxWidth / 1.75);
-		
+
+		if ( maxHeight < height ) height = maxHeight;
+
 		// The grid size is fixed at 21 x grid heigth
 		// so that the proportions of the snake width and canvas height
 		// are always the same. 
