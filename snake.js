@@ -44,7 +44,8 @@ function Playground(drawingSurface, gridSize){
 	this.drawingSurface = drawingSurface;
 
 	var level = 0;
-	var timeout = 500;
+	// starting timout for the snake
+	var timeout = 400;
 
 	this.isInPlayground = function(position){
 		if ( position.x + that.gridSize > that.width ||
