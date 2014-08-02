@@ -192,14 +192,13 @@ Playground.prototype.throwTheFoodIn = function(){
 function Snake(width, drawingSurface){
 	var that = this;
 
+	var initialSnakeSize = 10;
 	this.snakeWidth = width; //width of the snake in px;
 
 	this.body = [];
 	this.currOrientation = this.orientationEnum.RIGHT;
 	this.nextOrientationBuffer = [];
-
-	var initialSnakeSize = 10;
-
+	
 	this.addSnakeToPosition = function(position){
 		that.body.push(position);
 		drawingSurface.drawRectangle(position.x, position.y, that.snakeWidth, that.snakeWidth);
@@ -318,8 +317,6 @@ Coordinate.prototype.equals = function(compareTo){
 };
 
 // Class for abstracting the drawing on canvas
-// so we can easily substitute the canvas with something else
-// to have some code portability
 function DrawingSurface(canv){
 	var that = this;
 
@@ -333,7 +330,7 @@ function DrawingSurface(canv){
 		var container = $('#game'),
 		maxWidth = container.width(),
 		maxHeight = container.height();
-		console.log(maxHeight);
+		
 		var width = maxWidth;
 		// 1.75 is the aprox. ratio that we want to keep between height and width
 		var height = (maxWidth / 1.75);
@@ -350,7 +347,7 @@ function DrawingSurface(canv){
 		// Recalculate the final height and width.
 		// This will prevent the problem when the snake hits invisible wall
 		// i.e. when the next step is outside the canvas but the snake 
-		// is not drawed to the border of the canvas.
+		// stops before reaching border of the canvas.
 		width = Math.floor(width / that.gridSize) * that.gridSize;
 		height = Math.floor(height / that.gridSize ) * that.gridSize;
 		

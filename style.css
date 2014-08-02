@@ -3,14 +3,13 @@
 body{
 	background-color:#01000F;
 	font-family: "VT323", sans;
-	font-size: 62.5%; /* 1em = 10px*/
 	color: #37CE1C;
-n}
+}
 h1{
-	font-size: 4em;
+	font-size: 3em;
 }
 h2{
-	font-size: 2.5em;
+	font-size: 1.5em;
 }
 :visited,:link{color:#37CE1C;}
 
@@ -19,8 +18,9 @@ h2{
 	margin:0 auto;
 }
 #header h1{
-	font-size:8em;
-	padding: 0.2em;
+	font-size: 2.5em;
+	font-variant:small-caps; 
+	padding: 0.5em;
 }
 canvas {
 	background: #37CE1C;

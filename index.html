@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<META NAME="viewport" CONTENT="width=device-width, height=device-height, user-scalable=no"/>
 	<link href="reset.css" rel="stylesheet" type="text/css" media="all">
 	<link href="style.css" rel="stylesheet" type="text/css" media="all">
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-	<script src="jquery.touchSwipe.min.js"></script>
-	<script src="snake.js"></script>
+
 </head>
 <body>
 	<div id="container">
@@ -21,11 +20,14 @@
 					<h2><a href="index.html">Play again?</a></h2>
 				</div>
 			</div>
-			<canvas id="playground" width="351" height="198">
-				Your browser is not supported. Sorry :/
+			<canvas id="playground" width="702" height="396">
+				Retro Snake game clone implemented in JavaScript.
 			</canvas>
 			<div id="level"><h2>Level: <span></span></h2></div>
 		</div>
 	</div>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="jquery.touchSwipe.min.js"></script>
+    <script src="snake.js"></script>
 </body>
 </html>
