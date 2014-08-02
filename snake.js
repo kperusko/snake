@@ -45,7 +45,7 @@ function Playground(drawingSurface, gridSize){
 
 	var level = 0;
 	// starting timout for the snake
-	var timeout = 400;
+	var timeout = 300;
 
 	this.isInPlayground = function(position){
 		if ( position.x + that.gridSize > that.width ||
@@ -170,8 +170,9 @@ Playground.prototype.pushTheSnake = function(){
 Playground.prototype.throwTheFoodIn = function(){
 	var randomEmptySpaceIndex =  Math.floor(Math.random() * this.emptySpace.length);
 	var foodCoordinate = Coordinate.prototype.fromString(this.emptySpace[randomEmptySpaceIndex]);
-
-	this.drawingSurface.drawRectangle(foodCoordinate.x, foodCoordinate.y, this.gridSize, this.gridSize);
+    var foodColor = "#326921";
+	
+	this.drawingSurface.drawRectangle(foodCoordinate.x, foodCoordinate.y, this.gridSize, this.gridSize, foodColor);
 
 	// Draw a food as in original snake.
 	// The original food is square divided in 9 squares
@@ -192,7 +193,8 @@ Playground.prototype.throwTheFoodIn = function(){
 function Snake(width, drawingSurface){
 	var that = this;
 
-	var initialSnakeSize = 10;
+	var snakeLength = 10;
+	var color = "#0A2A00";
 	this.snakeWidth = width; //width of the snake in px;
 
 	this.body = [];
@@ -201,7 +203,7 @@ function Snake(width, drawingSurface){
 	
 	this.addSnakeToPosition = function(position){
 		that.body.push(position);
-		drawingSurface.drawRectangle(position.x, position.y, that.snakeWidth, that.snakeWidth);
+		drawingSurface.drawRectangle(position.x, position.y, that.snakeWidth, that.snakeWidth, color);
 	};
 
 	this.move = function(position){
@@ -269,7 +271,7 @@ function Snake(width, drawingSurface){
 	};
 
     function createInitialSnake(){
-		for (var i=0; i < initialSnakeSize * that.snakeWidth; i += that.snakeWidth){
+		for (var i=0; i < snakeLength * that.snakeWidth; i += that.snakeWidth){
 			that.addSnakeToPosition(new Coordinate(i,0));
 		}
 	}
@@ -322,7 +324,6 @@ function DrawingSurface(canv){
 
 	this.canvas = canv;
 	this.ctx = this.canvas.getContext("2d");
-	this.ctx.fillStyle = "rgb(12,46,6)";
 	this.gridSize = null;
 
 	// stretch the width of the 
@@ -374,7 +375,8 @@ DrawingSurface.prototype.getHeight = function(){
 	return parseInt(this.canvas.getAttribute("height"), 10);
 };
 
-DrawingSurface.prototype.drawRectangle = function(x,y,width,height){
+DrawingSurface.prototype.drawRectangle = function(x,y,width,height, color){
+	this.ctx.fillStyle = color;
 	this.ctx.fillRect(x,y,width,height);
 };
 
