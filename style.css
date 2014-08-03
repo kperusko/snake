@@ -4,10 +4,10 @@ html {
 	height: 100%;
 }
 body{
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#303030), to(#0a0a0a));
-    background-image: -webkit-linear-gradient(top, #303030, #0a0a0a);
-    background-image:    -moz-linear-gradient(top, #303030, #0a0a0a);
-    background-image:      -o-linear-gradient(top, #303030, #0a0a0a);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#262626), to(#0a0a0a));
+    background-image: -webkit-linear-gradient(top, #262626, #0a0a0a);
+    background-image:    -moz-linear-gradient(top, #262626, #0a0a0a);
+    background-image:      -o-linear-gradient(top, #262626, #0a0a0a);
     background-image:         linear-gradient(to top, #262626, #0a0a0a);
     font-family: "VT323", sans; 
     color: #37CE1C; 
