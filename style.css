@@ -10,7 +10,7 @@ body{
     background-image:      -o-linear-gradient(top, #262626, #0a0a0a);
     background-image:         linear-gradient(to top, #262626, #0a0a0a);
     font-family: "VT323", sans; 
-    color: #37CE1C; 
+    color: #D6D6D6; 
 }
 h1{
 	font-size: 3em;
@@ -22,10 +22,9 @@ h2{
 h3{
 	font-size: 1.5em;
 }
-:visited,:link{color:#282828;}
-
+:visited,:link{color:#ffffff;}
 canvas {
-	background: #34A90F;
+	background: #7fff3d;
 }
 #container{
 	margin:auto;
@@ -55,6 +54,8 @@ canvas {
 	width: 70%;
 	margin: auto;
 	text-align: center;
-	background: #83F55F;
+	background: #5764ff;
+	color: #2b327f;
 	padding: 5%;
 }
+
